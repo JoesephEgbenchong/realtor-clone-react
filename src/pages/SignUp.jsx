@@ -1,12 +1,18 @@
 import React, { useState } from 'react';
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import OAuth from '../components/OAuth';
+import { db } from '../firebase'
+import { toast } from 'react-toastify';
+
+import { getAuth, createUserWithEmailAndPassword, updateProfile } from "firebase/auth"
+import { serverTimestamp, setDoc, doc } from 'firebase/firestore';
 
 export default function SignUp() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({});
+  const navigate = useNavigate();
 
   const handleChange = (event) => {
     const name = event.target.name;
@@ -19,6 +25,31 @@ export default function SignUp() {
     setShowPassword((prevState) => !prevState);
   }
 
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    try {
+      const auth =getAuth();
+      const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
+
+      updateProfile(auth.currentUser, {
+        displayName: formData.fullName,
+      });
+
+      const user = userCredential.user;
+      const formDataCopy = { ...formData };
+      delete formDataCopy.password;
+      formDataCopy.timestamp = serverTimestamp();
+
+      await setDoc(doc(db, "users", user.uid), formDataCopy);
+      navigate("/");
+      toast.success("Sign Up was Successful");
+
+    } catch (error) {
+      toast.error("Something went wrong with the registration. Try again!");
+    }
+  }
+
   return (
     <section>
       <h1 className="text-3xl text-center font-bold mt-6">Sign Up</h1>
@@ -29,7 +60,7 @@ export default function SignUp() {
         </div>
 
         <div className="w-full md:w-[67%] lg:w-[40%] lg:ml-20">
-          <form  className=" ">
+          <form  onSubmit={handleSubmit}>
             <input className="w-full px-4 py-2 text-xl border-gray-300 bg-white text-gray-700 
             mb-6 transition duration-200 ease-in-out rounded-[90px]"
             type="text" name="fullName" id="fullName" 
