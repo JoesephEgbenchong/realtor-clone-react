@@ -86,7 +86,7 @@ export default function SignUp() {
               <AiFillEye className="absolute right-3 top-3 text-xl cursor-pointer" onClick={togglePasswordView}/> )}
             </div>
 
-            <div className="flex mb-6 flex-wrap justify-between whitespace-nowrap text-sm ms:text-lg">
+            <div className="flex mb-6 flex-wrap justify-between whitespace-nowrap text-sm sm:text-lg">
               <p className="mb-6">Have an account ? <Link to="/sign-in" 
               className="text-red-600 hover:text-red-700 
               transition duration-200 ease-in-out ml-1">Sign In</Link></p>
