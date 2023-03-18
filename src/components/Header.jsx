@@ -1,10 +1,15 @@
-import React from 'react';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 export default function () {
 
     const location = useLocation(); //gets the path of the route
     const navigate = useNavigate(); //enables navigation to the path upon clicking the element
+
+    const [pageState, setPageState] = useState("Sign in");
+    const [borderAuth, setBorderAuth] = useState("text-gray-400 border-b-transparent") //for updating the sign-in link on header
+    const auth = getAuth();
     
     const isActive = (path) => {
         if (location.pathname === path) {
@@ -13,6 +18,34 @@ export default function () {
             return "text-gray-400 border-b-transparent";
         }
       };
+
+      //Since the "Profile" replaces the "Sign in", the function activates the red border when either route is active 
+      const isAuthActive = () => {
+        if (location.pathname === "/profile" || location.pathname === "/sign-in") {
+            return "text-black border-b-[3px] border-red-500";
+        } else {
+            return "text-gray-400 border-b-transparent";
+        }
+
+      };
+
+      //hook dynamically updates the title of the link with dependency on the auth from firebase
+      useEffect(()=>{
+        onAuthStateChanged(auth, (user) =>{
+            if(user){
+                setPageState("Profile");
+            } else {
+                setPageState("Sign in")
+            }
+
+        });
+      }, [auth]);
+
+      //this hook dynamically updates the border on the "Profile" or "Sign in" with a dependency on 
+      //a change in location path.
+      useEffect(()=>{
+        setBorderAuth(isAuthActive);
+    }, [location.pathname])
 
   return (
     <div className="bg-white border-b shadow-sm sticky top-0 z-50">
@@ -27,8 +60,8 @@ export default function () {
                     onClick={() => navigate("/")}>Home</li>
                     <li className={`cursor-pointer py-3 text-sm font-semibold ${isActive("/offers")}`} 
                     onClick={() => navigate("/offers")}>Offers</li>
-                    <li className={`cursor-pointer py-3 text-sm font-semibold ${isActive("/sign-in")}`} 
-                    onClick={() => navigate("/sign-in")}>Sign In</li>
+                    <li className={`cursor-pointer py-3 text-sm font-semibold ${borderAuth}`} 
+                    onClick={() => navigate("/profile")}>{pageState}</li>
                 </ul>
             </div>
         </header>
