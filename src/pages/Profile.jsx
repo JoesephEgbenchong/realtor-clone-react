@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { getAuth, updateProfile } from 'firebase/auth';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase';
+import { FcHome } from 'react-icons/fc';
 
 export default function Profile() {
 
@@ -68,20 +69,28 @@ export default function Profile() {
             <input type="email" name="email" value={formData.email || ""} disabled 
             className="mb-6 w-full text-xl px-4 py-2 text-gray-700 bg-white border border-gray-300 
             transition ease-in-out rounded-[90px] disabled:bg-slate-300" />
-          </form>
 
-          <div className="flex justify-between md:text-sm sm:text-lg whitespace-nowrap mb-6">
-            <p className="flex items-center">Do you want to change your name?
-              <span className="text-red-500 cursor-pointer
-               hover:text-red-700 transition 
-              ease-in-out duration-200 ml-1" 
-              onClick={()=> {
-                changeDetail && handleSubmit()
-                setChangeDetail((prevState) => !prevState)
-                }}>{changeDetail ? "Apply Changes" : "Click here"}</span></p>
-            <p className="text-blue-600 hover:text-blue-800 cursor-pointer transition-all
-             duration-200 ease-in-out" onClick={onLogout}>Sign out</p>
-          </div>
+            <div className="flex justify-between md:text-sm sm:text-lg whitespace-nowrap mb-6">
+              <p className="flex items-center">Do you want to change your name?
+                <span className="text-red-500 cursor-pointer
+                hover:text-red-700 transition 
+                ease-in-out duration-200 ml-1" 
+                onClick={()=> {
+                  changeDetail && handleSubmit()
+                  setChangeDetail((prevState) => !prevState)
+                  }}>{changeDetail ? "Apply Changes" : "Click here"}</span></p>
+              <p className="text-blue-600 hover:text-blue-800 cursor-pointer transition-all
+              duration-200 ease-in-out" onClick={onLogout}>Sign out</p>
+            </div>
+          </form>
+          <button type='submit' className="w-full bg-blue-600 text-white uppercase font-medium  
+          text-sm px-7 py-3 hover:bg-blue-700 transition duration-150 ease-in-out active:bg-blue-800 
+          rounded-[90px] shadow-md hover:shadow-lg">
+            <Link to="/create-listing" className="flex items-center justify-center">
+                <FcHome className="mr-2 text-3xl bg-white rounded-full p-1 border-2"/>
+                Sell or rent your home
+            </Link>
+          </button>
         </div>
       </section>
     </>
