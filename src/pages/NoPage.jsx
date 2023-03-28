@@ -25,7 +25,7 @@ export default function NoPage() {
           </button>
         </div>
         <div className="md:w-[80%] lg:w-[50%] mt-4">
-          <img src={notFoundImage} alt="404 image not found" className="w-full rounded-full bg-white" />
+          <img src={notFoundImage} alt="404 page not found" className="w-full rounded-full bg-white" />
         </div>
       </div>
     </section>
