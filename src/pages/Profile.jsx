@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { getAuth, updateProfile } from 'firebase/auth';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { collection, doc, getDoc, getDocs, orderBy, query, updateDoc, where } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDoc, getDocs, orderBy, query, updateDoc, where } from 'firebase/firestore';
 import { db } from '../firebase';
 import { FcHome } from 'react-icons/fc';
 import ListingItem from '../components/ListingItem';
@@ -77,6 +77,21 @@ export default function Profile() {
     }
     fetchUserListings();
   }, [auth.currentUser.uid]);
+
+  const editListing = (listingID) => {
+    navigate(`/edit-listing/${listingID}`);
+  }
+
+  const deleteListing =  async (listingID) => {
+    if(window.confirm("Confirm Listing delete ?")){
+      await deleteDoc(doc(db, "listings", listingID));
+      const updatedListings = listings.filter(
+        (listing) => listing.id !==listingID
+      );
+      setListings(updatedListings);
+      toast.success("Listing Deleted");
+    }
+  }
   
 
   return (
@@ -130,7 +145,9 @@ export default function Profile() {
                 <ListingItem 
                 key={listing.id} 
                 id={listing.id} 
-                listing={listing.data} />
+                listing={listing.data}
+                onEdit={()=> editListing(listing.id)}
+                onDelete={()=> deleteListing(listing.id)} />
               ))}
             </ul>
           </>

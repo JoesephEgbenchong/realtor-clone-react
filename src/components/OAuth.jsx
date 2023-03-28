@@ -33,11 +33,11 @@ export default function OAuth() {
       }
 
       navigate("/");
-      toast.success("Successful authorization with Google!")
+      toast.success("Successful authentication with Google!")
 
     } catch (error) {
 
-      toast.error("Could not authorize with Google");
+      toast.error("Could not authenticate with Google");
       
     }
   }
