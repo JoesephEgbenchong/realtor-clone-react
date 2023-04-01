@@ -7,14 +7,18 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore, {EffectFade, Autoplay, Navigation, Pagination} from "swiper";
 import "swiper/css/bundle";
 import { FaBath, FaBed, FaChair, FaMapMarkerAlt, FaParking, FaShare } from 'react-icons/fa';
+import { getAuth } from 'firebase/auth';
+import ContactOwner from '../components/ContactOwner';
 
 export default function Listing() {
 
+    const auth = getAuth();
     const params = useParams();
     const [listing, setListing] = useState(null);
     const [loading, setLoading] = useState(true);
     const [sharedLinkCopied, setSharedLinkCopied] = useState(false);
     SwiperCore.use([Autoplay, Navigation, Pagination]);
+    const [contactLandlord, setContactLandlord] = useState(false);
 
     useEffect(() => {
         const fetchListing = async () => {
@@ -61,7 +65,7 @@ export default function Listing() {
 
         <div className="flex flex-col md:flex-row max-w-6xl lg:mx-auto m-4 p-4 rounded-lg shadow-lg bg-white
          lg:space-x-5">
-            <div className=" w-full h-[200px] lg:h-[400px]">
+            <div className=" w-full">
                 <p className="text-2xl font-bold text-blue-900">
                     {listing.name} - ${listing.offer ? listing.discountedPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : 
                     listing.regularPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
@@ -102,6 +106,17 @@ export default function Listing() {
                         {listing.furniture ? "Furnished" : "Not Furnished"}
                     </li>
                 </ul>
+                {listing.userRef !== auth.currentUser?.uid && !contactLandlord && (
+                    <div className='mt-6'>
+                        <button onClick={() => setContactLandlord(true)} className='px-7 py-3 bg-blue-600 text-white font-semibold
+                            w-full cursor-pointer shadow-md rounded-md hover:bg-blue-700 hover:shadow-lg 
+                            transition duration-150 ease-in-out active:bg-blue-900 focus:shadow-lg uppercase'>
+                        Contact Landlord
+                        </button>
+                    </div>
+                )}
+                {contactLandlord && <ContactOwner userRef={listing.userRef} listing={listing} />} 
+                
             </div>
             <div className="bg-blue-300 w-full h-[200px] lg:h-[400px]">
 
